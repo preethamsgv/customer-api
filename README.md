@@ -54,6 +54,11 @@ Make sure to start the kubernetes cluster using minikube
 4. Check resources using kubectl get all
 5. kubectl port-forward svc/kubernetes 8081:8081
 
+**Integration Test**
+Included as part of the test suite. Can be run using mvn test.This can be Automated as part of Jenkins CICD pipeline which gets triggered on every PR merge
+to develop branch or main branch.
+
+
 **Test Application**
 1. Fetch All Customers
    ```
