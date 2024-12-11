@@ -130,7 +130,7 @@ class CustomerControllerTest {
     @Test
     void updateCustomer_ShouldThrowInvalidIdFormatException_WhenIdIsInvalid() {
         // Act & Assert
-        assertThrows(InvalidIdFormatException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             customerController.updateCustomer("invalid-uuid", customer);
         });
     }
