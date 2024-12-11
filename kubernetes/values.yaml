@@ -1,0 +1,65 @@
+replicaCount: 2
+
+image:
+  repository: localhost:5001/customer-api
+  tag: latest
+  pullPolicy: IfNotPresent
+
+datadog:
+  enabled: true
+  image: datadog/agent:latest
+  apiKey: "3af7905425044f1e2cb8dc03a3ce0b0e"
+  env:
+    DD_APM_ENABLED: "true"
+    DD_LOGS_ENABLED: "true"
+
+service:
+  type: NodePort
+  port: 8080
+
+env:
+  DD_AGENT_HOST: datadog
+  DD_SERVICE: customer-api
+  DD_ENV: local
+  DD_VERSION: 1.0.0
+  DD_LOGS_INJECTION: true
+  JAVA_OPTS: >-
+    -javaagent:/app/dd-java-agent.jar
+    -Ddd.profiling.enabled=true
+    -Ddd.logs.injection=true
+    -Ddd.trace.analytics.enabled=true
+
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: customer-data-api.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80

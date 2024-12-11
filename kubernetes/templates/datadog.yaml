@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: datadog-agent
+  labels:
+    app: datadog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: datadog
+  template:
+    metadata:
+      labels:
+        app: datadog
+    spec:
+      containers:
+        - name: datadog-agent
+          image: "{{ .Values.datadog.image }}"
+          env:
+            - name: DD_API_KEY
+              value: "{{ .Values.datadog.apiKey }}"
+            {{- range $key, $value := .Values.datadog.env }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+            {{- end }}
+          volumeMounts:
+            - name: docker-sock
+              mountPath: /var/run/docker.sock
+      volumes:
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock

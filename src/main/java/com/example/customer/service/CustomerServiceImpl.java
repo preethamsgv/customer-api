@@ -39,20 +39,17 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Trace
     public Optional<Customer> getCustomerById(UUID uuid) {
-        try {
-            Optional<Customer> customer = repository.findById(uuid);
-            if (customer.isPresent()) {
-                logger.info("Customer with ID {} found", uuid);
-            } else {
-                logger.warn("Customer with ID {} not found", uuid);
-            }
-            return customer.or(() -> {
-                throw new CustomerNotFoundException("Customer with ID " + uuid + " not found");
-            });
-        } catch (Exception ex) {
-            logger.error("Error while fetching customer with ID: {}", uuid, ex);
-            throw new DatabaseAccessException("Error accessing the database.");
+
+        Optional<Customer> customer = repository.findById(uuid);
+        if (customer.isPresent()) {
+            logger.info("Customer with ID {} found", uuid);
+        } else {
+            logger.warn("Customer with ID {} not found", uuid);
         }
+        return customer.or(() -> {
+            throw new CustomerNotFoundException("Customer with ID " + uuid + " not found");
+        });
+
     }
 
     @Override
@@ -64,12 +61,10 @@ public class CustomerServiceImpl implements CustomerService {
         if (repository.existsByFirstNameAndLastName(customer.getFirstName(), customer.getLastName())) {
             logger.warn("Duplicate customer with name: {} {}", customer.getFirstName(), customer.getLastName());
             throw new DuplicateResourceException("Customer with the same name already exists");
-        }
-        else if (repository.existsByEmailAddress(customer.getEmailAddress())) {
+        } else if (repository.existsByEmailAddress(customer.getEmailAddress())) {
             logger.warn("Duplicate customer with email: {}", customer.getEmailAddress());
             throw new DuplicateResourceException("Customer with email " + customer.getEmailAddress() + " already exists");
-        }
-        else {
+        } else {
             try {
                 Customer savedCustomer = repository.save(customer);
                 logger.info("Customer saved successfully with ID: {}", savedCustomer.getId());
@@ -91,8 +86,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (!repository.existsById(uuid)) {
             logger.warn("Customer with ID {} not found for update", uuid);
             throw new CustomerNotFoundException("Customer with ID " + uuid + " not found");
-        }
-        else {
+        } else {
             try {
                 // Check if the customer exists
                 Customer existingCustomer = getCustomerById(uuid).get();
