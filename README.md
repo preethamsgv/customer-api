@@ -59,6 +59,11 @@ Included as part of the test suite. Can be run using mvn test.This can be Automa
 to develop branch or main branch.
 
 
+**Generating Client to Test the API**
+1. Download swagger code gen plugin
+2. Run this command "swagger-codegen generate -i src/main/resources/open-api/customer-api.yaml -l java -o user-api-client"
+3. Client Stubs are generated from above command.
+
 **Test Application**
 1. Fetch All Customers
    ```
